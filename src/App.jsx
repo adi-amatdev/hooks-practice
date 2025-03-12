@@ -1,38 +1,44 @@
 import React, { useState , useEffect } from 'react';
 
 function App() {
-  const [bool,setBool] = useState(true);
-  useEffect(()=>{
-    setTimeout(()=>{setBool(r => !r)},10000)
-  },[]);
+  
   return (
     <>
-    {bool?(
       <MyComponent />
-    ):(
-      <div></div>
-    )}
-    </>
+    </>    
   )
+}
+
+function useDebouncing(value,time){
+    const [dvalue , setDvalue] = useState('');
+    useEffect(()=>{
+      const id = setTimeout(()=>{
+        setDvalue(value);
+      },time)
+
+      return ()=>{
+        clearTimeout(id);
+      }
+    },[value]);
+
+    return dvalue;
 }
 
 
 function MyComponent() {
-  useEffect(() => {
-    // Perform setup or data fetching here
-    alert('component mounted')
-    return () => {
-      // Cleanup code (similar to componentWillUnmount)
-      alert('component un-mounted')
-    };
-  }, []);
+  const [values,setValues] = useState('');
 
-  // Render UI
+  const debouncedValue = useDebouncing(values,500)
+
   return <>
-    <div>
-      from inside component
-    </div>
+    {debouncedValue}
+    <input 
+    type="text" 
+    onChange={e => setValues(e.target.value)}
+    placeholder='add something here...'
+    />
   </>
+  
 }
 
 
